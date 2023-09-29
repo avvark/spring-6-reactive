@@ -26,11 +26,6 @@ public class BeerController {
 
   private final BeerService beerService;
 
-  @GetMapping(BEER_PATH)
-  Flux<BeerDto> listBeers() {
-    return beerService.listBeers();
-  }
-
   @GetMapping(BEER_PATH_ID)
   Mono<BeerDto> getBeerById(@PathVariable("beerId") Integer beerId) {
     return beerService.getBeerById(beerId);
@@ -55,7 +50,7 @@ public class BeerController {
   ResponseEntity<Void> updateExistingBeer(
       @PathVariable("beerId") Integer beerId, @Validated @RequestBody BeerDto beerDto) {
     beerService.updateBeer(beerId, beerDto).subscribe();
-    return ResponseEntity.ok().build();
+    return ResponseEntity.noContent().build();
   }
 
   @PatchMapping(BEER_PATH_ID)
@@ -68,5 +63,10 @@ public class BeerController {
   @DeleteMapping(BEER_PATH_ID)
   Mono<ResponseEntity<Void>> deleteById(@PathVariable("beerId") Integer beerId) {
     return beerService.deleteBeer(beerId).map(response -> ResponseEntity.noContent().build());
+  }
+
+  @GetMapping(BEER_PATH)
+  Flux<BeerDto> listBeers() {
+    return beerService.listBeers();
   }
 }
