@@ -5,6 +5,7 @@ import guru.springframework.spring6reactive.model.BeerDto;
 import guru.springframework.spring6reactive.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -53,10 +54,10 @@ public class BeerServiceImpl implements BeerService {
         .findById(beerId)
         .map(
             foundBeer -> {
-              if (beerDto.getBeerName() != null) {
+              if (StringUtils.hasText(beerDto.getBeerName())) {
                 foundBeer.setBeerName(beerDto.getBeerName());
               }
-              if (beerDto.getBeerStyle() != null) {
+              if (StringUtils.hasText(beerDto.getBeerStyle())) {
                 foundBeer.setBeerStyle(beerDto.getBeerStyle());
               }
               if (beerDto.getPrice() != null) {
