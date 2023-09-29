@@ -2,6 +2,7 @@ package guru.springframework.spring6reactive.controllers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import guru.springframework.spring6reactive.domain.Beer;
 import guru.springframework.spring6reactive.model.BeerDto;
 import guru.springframework.spring6reactive.repositories.BeerRepositoryTest;
 import org.junit.jupiter.api.MethodOrderer;
@@ -51,7 +52,7 @@ class BeerControllerTest {
     webTestClient
         .post()
         .uri(BeerController.BEER_PATH)
-        .body(Mono.justOrEmpty(BeerRepositoryTest.getTestBeer()), BeerDto.class)
+        .body(Mono.just(BeerRepositoryTest.getTestBeer()), BeerDto.class)
         .header("Content-type", "application/json")
         .exchange()
         .expectStatus()
@@ -61,6 +62,22 @@ class BeerControllerTest {
   }
 
   @Test
+  void testCreateBeerBadData() {
+    Beer testBeer = BeerRepositoryTest.getTestBeer();
+    testBeer.setBeerName("");
+    webTestClient
+        .post()
+        .uri(BeerController.BEER_PATH)
+        .body(Mono.just(testBeer), BeerDto.class)
+        .header("Content-type", "application/json")
+        .exchange()
+        .expectStatus()
+        .isBadRequest();
+  }
+
+
+  @Test
+  @Order(3)
   void testUpdateBeer() {
     webTestClient
         .put()
@@ -70,6 +87,21 @@ class BeerControllerTest {
         .exchange()
         .expectStatus()
         .isNoContent();
+  }
+
+  @Test
+  @Order(4)
+  void testUpdateBeerBadRequest() {
+    Beer testBeer = BeerRepositoryTest.getTestBeer();
+    testBeer.setBeerStyle("");
+    webTestClient
+        .put()
+        .uri(BeerController.BEER_PATH_ID, 1)
+        .body(Mono.just(testBeer), BeerDto.class)
+        .header("Content-type", "application/json")
+        .exchange()
+        .expectStatus()
+        .isBadRequest();
   }
 
   @Test
