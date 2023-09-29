@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -45,5 +46,12 @@ public class BeerController {
                             .build()
                             .toUri())
                     .build());
+  }
+
+  @PutMapping(BEER_PATH_ID)
+  ResponseEntity<Void> updateExistingBeer(
+      @PathVariable("beerId") Integer beerId, @RequestBody BeerDto beerDto) {
+    beerService.updateBeer(beerId, beerDto).subscribe();
+    return ResponseEntity.ok().build();
   }
 }
