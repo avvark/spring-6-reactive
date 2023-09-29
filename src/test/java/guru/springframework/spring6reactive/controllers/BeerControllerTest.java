@@ -4,7 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import guru.springframework.spring6reactive.model.BeerDto;
 import guru.springframework.spring6reactive.repositories.BeerRepositoryTest;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class BeerControllerTest {
 
   @Autowired
@@ -30,6 +34,7 @@ class BeerControllerTest {
   }
 
   @Test
+  @Order(1)
   void testListBeers() {
     webTestClient
         .get()
@@ -41,6 +46,7 @@ class BeerControllerTest {
   }
 
   @Test
+  @Order(2)
   void testCreateBeer() {
     webTestClient
         .post()
@@ -51,7 +57,7 @@ class BeerControllerTest {
         .expectStatus()
         .isCreated()
         .expectHeader()
-        .valueEquals("Location", "http://localhost:8080/api/v1/beers/4");
+        .valueEquals("Location", "http://localhost:8080/api/v2/beer/4");
   }
 
   @Test
@@ -61,6 +67,17 @@ class BeerControllerTest {
         .uri(BeerController.BEER_PATH_ID, 1)
         .body(Mono.justOrEmpty(BeerRepositoryTest.getTestBeer()), BeerDto.class)
         .header("Content-type", "application/json")
+        .exchange()
+        .expectStatus()
+        .isNoContent();
+  }
+
+  @Test
+  @Order(999)
+  void testDeleteBeer() {
+    webTestClient
+        .delete()
+        .uri(BeerController.BEER_PATH_ID, 1)
         .exchange()
         .expectStatus()
         .isNoContent();

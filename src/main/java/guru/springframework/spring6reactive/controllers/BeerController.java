@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class BeerController {
 
-  public static final String BEER_PATH = "api/v2/beer";
+  public static final String BEER_PATH = "/api/v2/beer";
   public static final String BEER_PATH_ID = BEER_PATH + "/{beerId}";
 
   private final BeerService beerService;
@@ -62,7 +62,7 @@ public class BeerController {
 
   @DeleteMapping(BEER_PATH_ID)
   Mono<ResponseEntity<Void>> deleteById(@PathVariable("beerId") Integer beerId) {
-    return beerService.deleteBeer(beerId).map(response -> ResponseEntity.noContent().build());
+    return beerService.deleteBeer(beerId).thenReturn(ResponseEntity.noContent().build());
   }
 
   @GetMapping(BEER_PATH)
